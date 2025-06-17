@@ -23,7 +23,7 @@ class Pengguna extends Migration
                 'type' => 'varchar',
                 'constraint' => '100',
                 'null' => false,
-                'unique' => true,,
+                'unique' => true
             ],
             'password' => [
                 'type' => 'varchar',
@@ -40,10 +40,6 @@ class Pengguna extends Migration
                 'null' => true,
             ],
         ]);
-
-        
-        
-
 
 
         $this->forge->addKey('id_pengguna', true);
