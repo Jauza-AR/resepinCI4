@@ -7,4 +7,5 @@ use CodeIgniter\Router\RouteCollection;
  */
 $routes->get('/', 'Home::index');
 $routes->resource('resep');
-$routes->resource('Pengguna');
+$routes->resource('pengguna');
+$routes->post('reseplike/like', 'ResepLike::likeResep');
