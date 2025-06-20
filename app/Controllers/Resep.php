@@ -69,4 +69,18 @@ class Resep extends ResourceController
             return $this->respondDeleted("Data dengan id " . $id . " berhasil dihapus");
         }
     }
+
+    public function populer()
+    {
+        $db = \Config\Database::connect();
+        $builder = $db->table('resep')
+            ->select('resep.*, COUNT(resep_like.id_like) as jumlah_like')
+            ->join('resep_like', 'resep.id_resep = resep_like.id_resep AND resep_like.status = 1', 'left')
+            ->groupBy('resep.id_resep')
+            ->orderBy('jumlah_like', 'DESC')
+            ->limit(10);
+
+        $data = $builder->get()->getResult();
+        return $this->respond($data);
+    }
 }
