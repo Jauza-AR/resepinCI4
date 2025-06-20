@@ -7,5 +7,11 @@ use CodeIgniter\Router\RouteCollection;
  */
 $routes->get('/', 'Home::index');
 $routes->resource('resep');
+$routes->resource('resep');
 $routes->resource('pengguna');
+$routes->resource('resepfavorit');
 $routes->post('reseplike/like', 'ResepLike::likeResep');
+$routes->post('favorite/add', 'ResepFavorit::addToFavorites');
+$routes->post('favorite/remove', 'ResepFavorit::removeFromFavorites');
+$routes->get('favorite/user/(:num)', 'ResepFavorit::getFavoritesByUser/$1');
+
