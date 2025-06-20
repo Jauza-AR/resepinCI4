@@ -46,8 +46,8 @@ class ResepModel extends Model
     protected $validationMessages   = [
         'nama_resep' => [
             'required' => 'Silakan masukan nama resep',
-            'min_length'=> 'Nama resep minimal 5 karakter',
-            'max_length'=> 'Nama resep maksimal 20 karakter',
+            'min_length' => 'Nama resep minimal 5 karakter',
+            'max_length' => 'Nama resep maksimal 20 karakter',
         ],
         'gambar' => [
             'required' => 'Silakan upload gambar'
@@ -57,8 +57,8 @@ class ResepModel extends Model
         ],
         'deskripsi' => [
             'required' => 'Silakan masukan deskripsi',
-            'min_length'=> 'Deskripsi minimal 5 karakter',
-            'max_length'=> 'Deskripsi maksimal 400 karakter',
+            'min_length' => 'Deskripsi minimal 5 karakter',
+            'max_length' => 'Deskripsi maksimal 400 karakter',
         ],
         'tanggal_unggah' => [
             'required' => 'Silakan masukan tanggal unggah',

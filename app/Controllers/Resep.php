@@ -10,8 +10,8 @@ use App\Models\BahanResepModel;
 use App\Models\LangkahResepModel;
 use App\Models\ResepLikeModel;
 use App\Models\KomentarModel;
-use App\Models\ResepFavoritModel;
-use App\Models\PenggunaFavoritModel;
+// use App\Models\ResepFavoritModel;
+// use App\Models\PenggunaFavoritModel;
 
 class Resep extends ResourceController
 {
@@ -79,61 +79,61 @@ class Resep extends ResourceController
     }
 
 
-    // public function detail($id_resep)
-    // {
-    //     $resepModel = new ResepModel();
-    //     $penggunaModel = new PenggunaModel();
-    //     $bahanModel = new BahanResepModel();
-    //     $langkahModel = new LangkahResepModel();
-    //     $likeModel = new ResepLikeModel();
-    //     $komentarModel = new KomentarModel();
-    //     $favoritModel = new ResepFavoritModel();
-    //     $penggunaFavoritModel = new PenggunaFavoritModel();
+    public function detail($id_resep)
+    {
+        $resepModel = new ResepModel();
+        $penggunaModel = new PenggunaModel();
+        $bahanModel = new BahanResepModel();
+        $langkahModel = new LangkahResepModel();
+        $likeModel = new ResepLikeModel();
+        $komentarModel = new KomentarModel();
+        // $favoritModel = new ResepFavoritModel();
+        // $penggunaFavoritModel = new PenggunaFavoritModel();
 
-    //     // Ambil data resep
-    //     $resep = $resepModel->find($id_resep);
+        // Ambil data resep
+        $resep = $resepModel->find($id_resep);
 
-    //     // Ambil data user pembuat resep
-    //     $pembuat = $penggunaModel->find($resep['id_pengguna']);
+        // Ambil data user pembuat resep
+        $pembuat = $penggunaModel->find($resep->id_pengguna);
 
-    //     // Ambil bahan-bahan resep
-    //     $bahan = $bahanModel->where('id_resep', $id_resep)->findAll();
+        // Ambil bahan-bahan resep
+        $bahan = $bahanModel->where('id_resep', $id_resep)->findAll();
 
-    //     // Ambil langkah-langkah resep
-    //     $langkah = $langkahModel->where('id_resep', $id_resep)->orderBy('urutan', 'ASC')->findAll();
+        // Ambil langkah-langkah resep
+        $langkah = $langkahModel->where('id_resep', $id_resep)->orderBy('urutan', 'ASC')->findAll();
 
-    //     // Ambil jumlah like
-    //     $jumlah_like = $likeModel->where(['id_resep' => $id_resep, 'status' => 1])->countAllResults();
+        // Ambil jumlah like
+        $jumlah_like = $likeModel->where(['id_resep' => $id_resep, 'status' => 1])->countAllResults();
 
-    //     // Ambil komentar
-    //     $komentar = $komentarModel->where('id_resep', $id_resep)->findAll();
+        // Ambil komentar
+        $komentar = $komentarModel->where('id_resep', $id_resep)->findAll();
 
-    //     // Cek apakah user sudah like, favorit, atau follow (jika sudah login)
-    //     $user_id = session()->get('id_pengguna');
-    //     $sudah_like = false;
-    //     $sudah_favorit = false;
-    //     $sudah_follow = false;
+        // Cek apakah user sudah like, favorit, atau follow (jika sudah login)
+        $user_id = session()->get('id_pengguna');
+        $sudah_like = false;
+        $sudah_favorit = false;
+        $sudah_follow = false;
 
-    //     if ($user_id) {
-    //         $sudah_like = $likeModel->where(['id_pengguna' => $user_id, 'id_resep' => $id_resep, 'status' => 1])->first() ? true : false;
-    //         $sudah_favorit = $favoritModel->where(['id_pengguna' => $user_id, 'id_resep' => $id_resep])->first() ? true : false;
-    //         $sudah_follow = $penggunaFavoritModel->where(['id_pengguna' => $user_id, 'tambah_pengguna_favorit' => $pembuat['id_pengguna']])->first() ? true : false;
-    //     }
+        if ($user_id) {
+            $sudah_like = $likeModel->where(['id_pengguna' => $user_id, 'id_resep' => $id_resep, 'status' => 1])->first() ? true : false;
+            // $sudah_favorit = $favoritModel->where(['id_pengguna' => $user_id, 'id_resep' => $id_resep])->first() ? true : false;
+            // $sudah_follow = $penggunaFavoritModel->where(['id_pengguna' => $user_id, 'tambah_pengguna_favorit' => $pembuat['id_pengguna']])->first() ? true : false;
+        }
 
-    //     $data = [
-    //         'resep' => $resep,
-    //         'pembuat' => $pembuat,
-    //         'bahan' => $bahan,
-    //         'langkah' => $langkah,
-    //         'jumlah_like' => $jumlah_like,
-    //         'komentar' => $komentar,
-    //         'sudah_like' => $sudah_like,
-    //         'sudah_favorit' => $sudah_favorit,
-    //         'sudah_follow' => $sudah_follow,
-    //     ];
+        $data = [
+            'resep' => $resep,
+            'pembuat' => $pembuat,
+            'bahan' => $bahan,
+            'langkah' => $langkah,
+            'jumlah_like' => $jumlah_like,
+            'komentar' => $komentar,
+            'sudah_like' => $sudah_like,
+            'sudah_favorit' => $sudah_favorit,
+            'sudah_follow' => $sudah_follow,
+        ];
 
-    //     return view('resep/detail', $data);
-    // }
+        return $this->respond($data);
+    }
 
     public function populer()
     {
@@ -148,5 +148,4 @@ class Resep extends ResourceController
         $data = $builder->get()->getResult();
         return $this->respond($data);
     }
-
 }
