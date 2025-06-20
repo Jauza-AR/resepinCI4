@@ -96,6 +96,11 @@ class Resep extends ResourceController
         // Ambil data user pembuat resep
         $pembuat = $penggunaModel->find($resep->id_pengguna);
 
+        // Nama pengguna
+        // $nama_pengguna = $penggunaModel->select('nama_pengguna')
+        //     ->where('id_pengguna', $resep->id_pengguna)
+        //     ->first();
+
         // Ambil bahan-bahan resep
         $bahan = $bahanModel->where('id_resep', $id_resep)->findAll();
 
@@ -106,7 +111,11 @@ class Resep extends ResourceController
         $jumlah_like = $likeModel->where(['id_resep' => $id_resep, 'status' => 1])->countAllResults();
 
         // Ambil komentar
-        $komentar = $komentarModel->where('id_resep', $id_resep)->findAll();
+        // $komentar = $komentarModel->where('id_resep', $id_resep)->findAll();
+        $komentar = $komentarModel->select('komentar.*, pengguna.nama_pengguna, pengguna.foto_profil')
+            ->join('pengguna', 'pengguna.id_pengguna = komentar.id_pengguna')
+            ->where('komentar.id_resep', $id_resep)
+            ->findAll();
 
         // Cek apakah user sudah like, favorit, atau follow (jika sudah login)
         $user_id = session()->get('id_pengguna');
@@ -123,6 +132,7 @@ class Resep extends ResourceController
         $data = [
             'resep' => $resep,
             'pembuat' => $pembuat,
+            'nama_pengguna' => $pembuat->nama_pengguna,
             'bahan' => $bahan,
             'langkah' => $langkah,
             'jumlah_like' => $jumlah_like,
