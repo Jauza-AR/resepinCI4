@@ -10,7 +10,7 @@ class PenggunaModel extends Model
     protected $table            = 'pengguna';
     protected $primaryKey       = 'id_pengguna';
     protected $useAutoIncrement = true;
-    protected $returnType       = 'array';
+    protected $returnType       = 'App\Entities\Pengguna';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [

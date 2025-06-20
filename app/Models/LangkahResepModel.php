@@ -9,7 +9,7 @@ class LangkahResepModel extends Model
     protected $table            = 'langkah_resep';
     protected $primaryKey       = 'id_langkah';
     protected $useAutoIncrement = true;
-    protected $returnType       = 'app\Entities\LangkahResep';
+    protected $returnType       = 'App\Entities\LangkahResep';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
