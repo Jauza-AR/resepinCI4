@@ -139,7 +139,7 @@ class ResepFavorit extends ResourceController
         }
 
         $builder = $this->model->table('resep_favorit');
-        $builder->select('resep.*');
+        $builder->select('resep.id_resep, resep.nama_resep, resep.gambar, resep.kategori, resep.deskripsi, resep.tanggal_unggah');
         $builder->join('resep', 'resep.id_resep = resep_favorit.id_resep');
         $builder->where('resep_favorit.id_pengguna', $id_pengguna);
         $result = $builder->get()->getResult();
