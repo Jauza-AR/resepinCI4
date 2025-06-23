@@ -15,12 +15,17 @@ class PenggunaFavorit extends ResourceController
      */
     public function index($id_pengguna = null)
     {
-        if (!$id_pengguna) {
-            return $this->fail('ID pengguna wajib diisi');
-        }
-        $favorit = $this->model->where('id_pengguna', $id_pengguna)->findAll();
-        return $this->respond($favorit);
+    if (!$id_pengguna) {
+        return $this->fail('ID pengguna wajib diisi');
     }
+    // JOIN ke tabel pengguna untuk ambil detail
+    $favorit = $this->model
+        ->select('pengguna_favorit.*, pengguna.nama_pengguna, pengguna.foto_profil, pengguna.bio')
+        ->join('pengguna', 'pengguna.id_pengguna = pengguna_favorit.tambah_pengguna_favorit')
+        ->where('pengguna_favorit.id_pengguna', $id_pengguna)
+        ->findAll();
+    return $this->respond($favorit);
+}
 
     /**
      * Tambahkan pengguna favorit

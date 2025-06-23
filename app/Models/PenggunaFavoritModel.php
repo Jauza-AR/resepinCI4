@@ -27,9 +27,8 @@ class PenggunaFavoritModel extends Model
     protected $deletedField  = 'deleted_at';
 
     // Validation
-    protected $validationRules      = [
-        
-        'id_pengguna'         => 'required|is_natural_no_zero',
+    protected $validationRules = [
+        'id_pengguna' => 'required|is_natural_no_zero',
         'tambah_pengguna_favorit' => 'required|is_natural_no_zero',
     ];
     protected $validationMessages   = [
@@ -37,10 +36,12 @@ class PenggunaFavoritModel extends Model
         'id_pengguna' => [
             'required' => 'ID pengguna harus diisi.',
             'is_natural_no_zero' => 'ID pengguna harus berupa angka positif.',
+            
         ],
         'tambah_pengguna_favorit' => [
             'required' => 'ID pengguna yang ditambahkan sebagai favorit harus diisi.',
             'is_natural_no_zero' => 'ID pengguna yang ditambahkan sebagai favorit harus berupa angka positif.',
+            // 'is_unique' => 'Pengguna favorit ini sudah ada.',
         ],
     ];
     protected $skipValidation       = false;
