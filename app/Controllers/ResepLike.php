@@ -1,0 +1,44 @@
+<?php
+
+namespace App\Controllers;
+
+use CodeIgniter\HTTP\ResponseInterface;
+use CodeIgniter\RESTful\ResourceController;
+
+class ResepLike extends ResourceController
+{
+    protected $modelName = 'App\Models\ResepLikeModel';
+    protected $format    = 'json';
+
+    public function likeResep()
+    {
+        $id_pengguna = $this->request->getPost('id_pengguna');
+        $id_resep    = $this->request->getPost('id_resep');
+
+        if (!$id_pengguna || !$id_resep) {
+            return $this->fail('id_pengguna dan id_resep wajib diisi', 400);
+        }
+
+        // Cek apakah sudah ada like sebelumnya
+        $like = $this->model
+            ->where('id_pengguna', $id_pengguna)
+            ->where('id_resep', $id_resep)
+            ->first();
+
+        if ($like) {
+            // Jika sudah ada, update status ke true
+            $this->model->update($like->id_like, ['status' => true]);
+        } else {
+            // Jika belum ada, insert baru
+            $this->model->insert([
+                'id_pengguna' => $id_pengguna,
+                'id_resep'    => $id_resep,
+                'status'      => true,
+            ]);
+        }
+
+        return $this->respond(['message' => 'Resep berhasil di-like']);
+    }
+
+
+}
