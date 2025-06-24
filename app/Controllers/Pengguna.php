@@ -11,7 +11,8 @@ class Pengguna extends ResourceController
     protected $modelName = 'App\Models\PenggunaModel';
     protected $format    = 'json';
 
-    public function me() {
+    public function me()
+    {
         $id_pengguna = session()->get('id_pengguna');
         if (!$id_pengguna) {
             return $this->failUnauthorized('Anda harus login terlebih dahulu');
@@ -110,6 +111,41 @@ class Pengguna extends ResourceController
     //     return $this->respond(['message' => 'Login berhasil']);
     // }
 
+
+
+    //Loggin jadi
+
+    // public function login()
+    // {
+    //     $rules = [
+    //         'email'    => 'required|valid_email',
+    //         'password' => 'required'
+    //     ];
+
+    //     if (!$this->validate($rules)) {
+    //         return $this->fail($this->validator->getErrors());
+    //     }
+
+    //     $data = $this->request->getPost();
+    //     $user = $this->model->where('email', $data['email'])->first();
+
+    //     if (!$user) {
+    //         return $this->failUnauthorized('Email tidak ditemukan');
+    //     }
+
+    //     if (!password_verify($data['password'], $user->password)) {
+    //         return $this->failUnauthorized('Password salah');
+    //     }
+
+    //     session()->set([
+    //         'id_pengguna'   => $user->id_pengguna,
+    //         'email'         => $user->email,
+    //         'logged_in'     => true
+    //     ]);
+
+    //     return $this->respond(['message' => 'Login berhasil']);
+    // }
+
     public function login()
     {
         $rules = [
@@ -135,10 +171,24 @@ class Pengguna extends ResourceController
         session()->set([
             'id_pengguna'   => $user->id_pengguna,
             'email'         => $user->email,
+            'nama_pengguna' => $user->nama_pengguna,
             'logged_in'     => true
         ]);
 
-        return $this->respond(['message' => 'Login berhasil']);
+        // Ubah entity ke array jika perlu
+        $userData = [
+            'id_pengguna'   => $user->id_pengguna,
+            'nama_pengguna' => $user->nama_pengguna,
+            'email'         => $user->email,
+            'bio'           => $user->bio ?? null,
+            'foto_profil'   => $user->foto_profil ?? null,
+            // tambahkan field lain jika ada
+        ];
+
+        return $this->respond([
+            'message' => 'Login berhasil',
+            'user'    => $userData
+        ]);
     }
 
 }

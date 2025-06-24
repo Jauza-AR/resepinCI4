@@ -13,6 +13,9 @@ $routes->get('me', 'Pengguna::me');
 $routes->get('resep/detail/(:num)', 'Resep::detail/$1');
 $routes->get('resep/populer', 'Resep::populer');
 
+
+//pengguna login
+
 $routes->post('pengguna/login', 'Pengguna::login');
 
 $routes->resource('resep');
