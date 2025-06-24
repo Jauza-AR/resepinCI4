@@ -36,7 +36,7 @@ class ResepLikeModel extends Model
     protected $validationRules      = [
         'id_pengguna' => 'required|integer',
         'id_resep' => 'required|integer',
-        'status' => 'required|in_list[0,1,true,false]',
+        'status' => 'required',
     ];
     protected $validationMessages   = [
         'id_pengguna' => [
@@ -49,7 +49,6 @@ class ResepLikeModel extends Model
         ],
         'status' => [
             'required' => 'Status harus diisi.',
-            'boolean'  => 'Status harus berupa true atau false.',
         ],
     ];
     protected $skipValidation       = false;
