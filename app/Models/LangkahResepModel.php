@@ -13,7 +13,7 @@ class LangkahResepModel extends Model
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
-        'id_langkah',
+        // 'id_langkah',
         'id_resep',
         'urutan',
         'isi_langkah',
@@ -34,26 +34,27 @@ class LangkahResepModel extends Model
 
     // Validation
     protected $validationRules      = [
-        'id_langkah' => 'required|integer',
+        // 'id_langkah' => 'required|integer',
         'id_resep' => 'required|integer',
-        'urutan' => 'required',
+        'urutan' => 'required|integer',  //Tambah Integer 
         'isi_langkah' => 'required|string|max_length[255]',
     ];
     protected $validationMessages   = [
-        'id_langkah' => [
-            'required' => 'ID bahan harus terisi.',
-            'integer'  => 'ID bahan harus berupa angka.',
-        ],
+        // 'id_langkah' => [
+        //     'required' => 'ID bahan harus terisi.',
+        //     'integer'  => 'ID bahan harus berupa angka.',
+        // ],
         'id_resep' => [
             'required' => 'ID resep harus terisi.',
             'integer'  => 'ID resep harus berupa angka.',
         ],
         'urutan' => [
             'required' => 'Urutan harus diisi.',
+            'integer' => 'Urutan Harus Berupa Angka'  //Tambahan
         ],
         'isi_langkah' => [
             'required' => 'Isi langkah harus diisi.',
-            'string'   => '',
+            'string'   => 'isi langkah harus berupa teks', //tambah ini
             'max_length' => 'Masukkan Langkah Langkah maksimal 255 karakter.',
         ],
     ];
