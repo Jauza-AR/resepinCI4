@@ -45,8 +45,25 @@ class Komentar extends ResourceController
     {
         //
     }
-
-    // public function update($id = null)
+    public function byResep($id_resep = null)
+    {
+        if (!$id_resep) {
+            return $this->failValidationErrors('id_resep wajib diisi');
+        }
+    
+        $db = \Config\Database::connect();
+        $builder = $db->table('komentar');
+        $builder->select('komentar.*, pengguna.nama_pengguna, pengguna.foto_profil');
+        $builder->join('pengguna', 'pengguna.id_pengguna = komentar.id_pengguna');
+        $builder->where('komentar.id_resep', $id_resep);
+        $builder->orderBy('waktu_komentar', 'DESC');
+        $query = $builder->get();
+        $data = $query->getResult();
+    
+        return $this->respond($data);
+    }
+}
+// public function update($id = null)
     // {
     //     $input = $this->request->getRawInput();
 
@@ -63,22 +80,5 @@ class Komentar extends ResourceController
 
 
 
-    public function byResep($id_resep = null)
-    {
-        if (!$id_resep) {
-            return $this->failValidationErrors('id_resep wajib diisi');
-        }
 
-        $db = \Config\Database::connect();
-        $builder = $db->table('komentar');
-        $builder->select('komentar.*, pengguna.nama_pengguna, pengguna.foto_profil');
-        $builder->join('pengguna', 'pengguna.id_pengguna = komentar.id_pengguna');
-        $builder->where('komentar.id_resep', $id_resep);
-        $builder->orderBy('waktu_komentar', 'DESC');
-        $query = $builder->get();
-        $data = $query->getResult();
-
-        return $this->respond($data);
-    }
-
-}
+// 

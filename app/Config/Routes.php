@@ -6,7 +6,7 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 $routes->get('/', 'Home::index');
-
+$routes->get('pengguna/hash-all-password', 'Pengguna::hashAllPassword');
 $routes->get('me', 'Pengguna::me');
 
 
