@@ -13,7 +13,7 @@ class BahanResepModel extends Model
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
-        'id_bahan',
+        // 'id_bahan',
         'id_resep',
         'nama_bahan',
     ];
@@ -33,15 +33,15 @@ class BahanResepModel extends Model
 
     // Validation
     protected $validationRules      = [
-        'id_bahan' => 'required|integer',
+        // 'id_bahan' => 'required|integer',
         'id_resep' => 'required|integer',
         'nama_bahan' => 'required|string|max_length[100]',
     ];
     protected $validationMessages   = [
-        'id_bahan' => [
-            'required' => 'ID bahan harus terisi.',
-            'integer'  => 'ID bahan harus berupa angka.',
-        ],
+        // 'id_bahan' => [
+        //     'required' => 'ID bahan harus terisi.',
+        //     'integer'  => 'ID bahan harus berupa angka.',
+        // ],
         'id_resep' => [
             'required' => 'ID resep harus terisi.',
             'integer'  => 'ID resep harus berupa angka.',
