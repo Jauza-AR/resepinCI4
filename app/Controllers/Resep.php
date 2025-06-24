@@ -10,10 +10,11 @@ use App\Models\BahanResepModel;
 use App\Models\LangkahResepModel;
 use App\Models\ResepLikeModel;
 use App\Models\KomentarModel;
+use App\Entities\Resep as ResepEntity;
 // use App\Models\ResepFavoritModel;
 // use App\Models\PenggunaFavoritModel;
 use CodeIgniter\API\ResponseTrait;
-use CodeIgniter\HTTP\Response;
+// use CodeIgniter\HTTP\Response;
 
 class Resep extends ResourceController
 {
@@ -56,6 +57,7 @@ class Resep extends ResourceController
         //     return $this->respondCreated($data, "Resep Berhasil Dibuat");
         // }
         // ====== Baru ======
+        $resep = new ResepEntity();
         $resepModel = new ResepModel();
         $bahanModel = new BahanResepModel();
         $langkahModel = new LangkahResepModel();
@@ -81,7 +83,7 @@ class Resep extends ResourceController
             return $this->fail([
                 'message' => 'Gagal Upload',
                 'error' =>$gambar ? $gambar->getErrorString() : 'Gambar Tidak Di temukan'
-            ]);
+            ], ResponseInterface::HTTP_BAD_REQUEST);
         }
 
         // Validasi Gambar
@@ -186,12 +188,15 @@ class Resep extends ResourceController
         if (!$this->model->find($id)) {
             return $this->fail('Data tidak ditemukan');
         }
-        $pendaftaran = new \App\Entities\Resep();
-        $pendaftaran->fill($data);
+        // $pendaftaran = new \App\Entities\Resep();
+        // $pendaftaran->fill($data);
+
+        $resep = new ResepEntity();
+        $resep->fill($data);
         if (!$this->validate($this->model->validationRules, $this->model->validationMessages)) {
             return $this->fail($this->validator->getErrors());
         }
-        if ($this->model->save($pendaftaran)) {
+        if ($this->model->save($resep)) {
             return $this->respondUpdated($data, "Pendaftaran Berhasil Diupdate");
         }
     }
@@ -221,6 +226,10 @@ class Resep extends ResourceController
         // Ambil data resep
         $resep = $resepModel->find($id_resep);
 
+        if(!$resep){
+            return $this->failNotFound('Resep Dengan ID'.$id_resep."Tidak Di Temukan");
+            
+        }
         // Ambil data user pembuat resep
         $pembuat = $penggunaModel->find($resep->id_pengguna);
 
