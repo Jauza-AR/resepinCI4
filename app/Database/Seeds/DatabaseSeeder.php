@@ -15,7 +15,5 @@ class DatabaseSeeder extends Seeder
         $this->call('Resepbahan');
         $this->call('Reseplangkah');
         $this->call('Komentar');
-
-        // $this->call('PenggunaFavorit');
     }
 }
