@@ -11,13 +11,14 @@ class PenggunaFavorit extends Migration
         $this->forge->addField([
             'id_pengguna_favorit' => [
                 'type' => 'INT',
+                'auto_increment' => true,
                 
             ],
             'id_pengguna' => [
                 'type' => 'INT',
                 
             ],
-            'tambah_pengguna_favorit' => [
+            '   ' => [
                 'type' => 'INT',
                 
             ],
@@ -25,6 +26,8 @@ class PenggunaFavorit extends Migration
 
         $this->forge->addKey('id_pengguna_favorit', true);
         $this->forge->createTable('pengguna_favorit');
+        $this->forge->addForeignKey('id_pengguna', 'pengguna', 'id_pengguna');
+        $this->forge->addForeignKey('tambah_pengguna_favorit', 'pengguna', 'id_pengguna');
     }
 
     public function down()
