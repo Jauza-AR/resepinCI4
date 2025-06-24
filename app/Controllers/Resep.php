@@ -10,7 +10,7 @@ use App\Models\BahanResepModel;
 use App\Models\LangkahResepModel;
 use App\Models\ResepLikeModel;
 use App\Models\KomentarModel;
-// use App\Models\ResepFavoritModel;
+use App\Models\ResepFavoritModel;
 // use App\Models\PenggunaFavoritModel;
 
 class Resep extends ResourceController
@@ -51,6 +51,42 @@ class Resep extends ResourceController
         $data = $builder->get()->getResult();
         return $this->respond($data);
     }
+
+
+public function semuaByUser($id_pengguna)
+{
+    $resepModel = new ResepModel();
+    $likeModel = new ResepLikeModel();
+    $favoritModel = new ResepFavoritModel();
+
+    $reseps = $resepModel->findAll();
+    $result = [];
+
+    foreach ($reseps as $resep) {
+        // Gunakan object property, bukan array
+        $jumlah_like = $likeModel->where(['id_resep' => $resep->id_resep, 'status' => 1])->countAllResults();
+
+        $sudah_like = $likeModel
+            ->where(['id_pengguna' => $id_pengguna, 'id_resep' => $resep->id_resep, 'status' => 1])
+            ->first() ? true : false;
+
+        $sudah_favorit = $favoritModel
+            ->where(['id_pengguna' => $id_pengguna, 'id_resep' => $resep->id_resep])
+            ->first() ? true : false;
+
+        $result[] = [
+            'id_resep'      => $resep->id_resep,
+            'nama_resep'    => $resep->nama_resep,
+            'gambar'        => $resep->gambar,
+            'deskripsi'     => $resep->deskripsi,
+            'jumlah_like'   => $jumlah_like,
+            'sudah_like'    => $sudah_like,
+            'sudah_favorit' => $sudah_favorit,
+        ];
+    }
+
+    return $this->respond($result);
+}
 
     public function create()
     {

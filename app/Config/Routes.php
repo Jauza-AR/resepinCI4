@@ -11,6 +11,7 @@ $routes->get('me', 'Pengguna::me');
 
 $routes->get('resep/detail/(:num)', 'Resep::detail/$1');
 $routes->get('resep/populer', 'Resep::populer');
+$routes->get('resep/semua-by-user/(:num)', 'Resep::semuaByUser/$1');
 
 $routes->post('pengguna/login', 'Pengguna::login');
 
