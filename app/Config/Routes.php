@@ -7,9 +7,13 @@ use CodeIgniter\Router\RouteCollection;
  */
 $routes->get('/', 'Home::index');
 
+$routes->get('me', 'Pengguna::me');
 
 $routes->get('resep/detail/(:num)', 'Resep::detail/$1');
 $routes->get('resep/populer', 'Resep::populer');
+
+$routes->post('pengguna/login', 'Pengguna::login');
+
 $routes->resource('resep');
 
 //pengguna favorit
