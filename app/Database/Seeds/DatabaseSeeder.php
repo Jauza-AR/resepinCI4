@@ -10,8 +10,10 @@ class DatabaseSeeder extends Seeder
     {
         $this->call('Pengguna');
         $this->call('Resep');
-        $this->call('ResepFavorit');
         $this->call('ResepLike');
-        // $this->call('PenggunaFavorit');
+        $this->call('ResepFavorit');
+        $this->call('Resepbahan');
+        $this->call('Reseplangkah');
+        $this->call('Komentar');
     }
 }
