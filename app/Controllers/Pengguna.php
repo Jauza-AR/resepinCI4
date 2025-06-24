@@ -200,6 +200,7 @@ class Pengguna extends ResourceController
     // }
 
     public function login()
+
     {
         $rules = [
             'email'    => 'required|valid_email',
@@ -228,6 +229,7 @@ class Pengguna extends ResourceController
             'logged_in'     => true
         ]);
 
+
         // Ubah entity ke array jika perlu
         $userData = [
             'id_pengguna'   => $user->id_pengguna,
@@ -242,5 +244,6 @@ class Pengguna extends ResourceController
             'message' => 'Login berhasil',
             'user'    => $userData
         ]);
+
     }
 }
