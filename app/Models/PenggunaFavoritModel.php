@@ -4,26 +4,20 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class ResepLikeModel extends Model
+class PenggunaFavoritModel extends Model
 {
     protected $DBGroup          = 'default';
-    protected $table            = 'resep_like';
-    protected $primaryKey       = 'id_like';
+    protected $table            = 'pengguna_favorit';
+    protected $primaryKey       = 'id_pengguna_favorit';
     protected $useAutoIncrement = true;
-    protected $returnType       = 'App\Entities\ResepLike';
+    protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
+        'id_pengguna_favorit',
         'id_pengguna',
-        'id_resep',
-        'status',
+        'tambah_pengguna_favorit',
     ];
-
-    protected bool $allowEmptyInserts = false;
-    protected bool $updateOnlyChanged = true;
-
-    protected array $casts = [];
-    protected array $castHandlers = [];
 
     // Dates
     protected $useTimestamps = false;
@@ -33,22 +27,21 @@ class ResepLikeModel extends Model
     protected $deletedField  = 'deleted_at';
 
     // Validation
-    protected $validationRules      = [
-        'id_pengguna' => 'required|integer',
-        'id_resep' => 'required|integer',
-        'status' => 'required',
+    protected $validationRules = [
+        'id_pengguna' => 'required|is_natural_no_zero',
+        'tambah_pengguna_favorit' => 'required|is_natural_no_zero',
     ];
     protected $validationMessages   = [
+
         'id_pengguna' => [
             'required' => 'ID pengguna harus diisi.',
-            'integer'  => 'ID pengguna harus berupa angka.',
+            'is_natural_no_zero' => 'ID pengguna harus berupa angka positif.',
+            
         ],
-        'id_resep' => [
-            'required' => 'ID resep harus diisi.',
-            'integer'  => 'ID resep harus berupa angka.',
-        ],
-        'status' => [
-            'required' => 'Status harus diisi.',
+        'tambah_pengguna_favorit' => [
+            'required' => 'ID pengguna yang ditambahkan sebagai favorit harus diisi.',
+            'is_natural_no_zero' => 'ID pengguna yang ditambahkan sebagai favorit harus berupa angka positif.',
+            // 'is_unique' => 'Pengguna favorit ini sudah ada.',
         ],
     ];
     protected $skipValidation       = false;
