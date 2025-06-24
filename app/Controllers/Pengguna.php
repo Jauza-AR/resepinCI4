@@ -84,6 +84,7 @@ class Pengguna extends ResourceController
         if ($this->model->delete($id)) {
             return $this->respondDeleted("Pengguna dengan ID $id telah dihapus");
         }
+
     }
 
     // public function login()
@@ -139,4 +140,5 @@ class Pengguna extends ResourceController
 
         return $this->respond(['message' => 'Login berhasil']);
     }
+
 }
