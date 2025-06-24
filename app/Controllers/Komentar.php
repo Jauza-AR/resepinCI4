@@ -46,20 +46,20 @@ class Komentar extends ResourceController
         //
     }
 
-    public function update($id = null)
-    {
-        $input = $this->request->getRawInput();
+    // public function update($id = null)
+    // {
+    //     $input = $this->request->getRawInput();
 
-        if (!$this->model->find($id)) {
-            return $this->failNotFound('Komentar tidak ditemukan');
-        }
+    //     if (!$this->model->find($id)) {
+    //         return $this->failNotFound('Komentar tidak ditemukan');
+    //     }
 
-        if (!$this->model->update($id, $input)) {
-            return $this->failValidationErrors($this->model->errors());
-        }
+    //     if (!$this->model->update($id, $input)) {
+    //         return $this->failValidationErrors($this->model->errors());
+    //     }
 
-        return $this->respond($input, 200, 'Komentar berhasil diupdate');
-    }
+    //     return $this->respond($input, 200, 'Komentar berhasil diupdate');
+    // }
 
 
 
