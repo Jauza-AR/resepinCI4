@@ -80,4 +80,34 @@ public function hashAllPassword()
 
     return $this->respond(['message' => "$updated password berhasil di-hash"]);
 }
+public function login()
+    {
+        $rules = [
+            'email'    => 'required|valid_email',
+            'password' => 'required'
+        ];
+
+        if (!$this->validate($rules)) {
+            return $this->fail($this->validator->getErrors());
+        }
+
+        $data = $this->request->getPost();
+        $user = $this->model->where('email', $data['email'])->first();
+
+        if (!$user) {
+            return $this->failUnauthorized('Email tidak ditemukan');
+        }
+
+        if (!password_verify($data['password'], $user->password)) {
+            return $this->failUnauthorized('Password salah');
+        }
+
+        session()->set([
+            'id_pengguna'   => $user->id_pengguna,
+            'email'         => $user->email,
+            'logged_in'     => true
+        ]);
+
+        return $this->respond(['message' => 'Login berhasil']);
+    }
 }
