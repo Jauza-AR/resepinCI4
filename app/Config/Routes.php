@@ -8,6 +8,7 @@ use CodeIgniter\Router\RouteCollection;
 $routes->get('/', 'Home::index');
 
 
+$routes->get('pengguna/hash-all-password', 'Pengguna::hashAllPassword');
 $routes->get('resep/detail/(:num)', 'Resep::detail/$1');
 $routes->get('resep/populer', 'Resep::populer');
 $routes->resource('resep');
@@ -25,6 +26,7 @@ $routes->resource('resepfavorit');
 $routes->post('favorite/add', 'ResepFavorit::addToFavorites');
 $routes->post('favorite/remove', 'ResepFavorit::removeFromFavorites');
 $routes->get('favorite/user/(:num)', 'ResepFavorit::getFavoritesByUser/$1');
+
 
 $routes->resource('komentar');
 $routes->post('reseplike/like', 'ResepLike::likeResep');
