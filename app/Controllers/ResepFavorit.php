@@ -107,31 +107,50 @@ class ResepFavorit extends ResourceController
         return $this->respondCreated(['message' => 'Resep berhasil ditambahkan ke favorit']);
     }
 
-    // public function removeFromFavorites()
+    // public function removeFromFavorites($idPengguna, $idResep)
     // {
-    //     $id_pengguna = $this->request->getPost('id_pengguna');
-    //     $id_resep = $this->request->getPost('id_resep');
+    //     $data = $this->model
+    //         ->where('id_pengguna', $idPengguna)
+    //         ->where('id_resep', $idResep)
+    //         ->first();
 
-    //     if (!$id_pengguna || !$id_resep) {
-    //         return $this->failValidationErrors('ID Pengguna dan ID Resep diperlukan.');
+    //     if (!$data) {
+    //         return $this->failNotFound("Resep favorit tidak ditemukan");
     //     }
 
-    //     // Cari entri berdasarkan kombinasi id_pengguna dan id_resep
-    //     $favorit = $this->model->table('resep_favorit')
-    //         ->where(['id_pengguna' => $id_pengguna, 'id_resep' => $id_resep])
-    //         ->get()->getRow();
-
-    //     if (!$favorit) {
-    //         return $this->respond(['message' => 'Resep tidak ada di favorit']);
+    //     if ($this->model->delete($data['id'])) {
+    //         return $this->respondDeleted("Resep favorit berhasil dihapus");
+    //     } else {
+    //         return $this->failServerError("Gagal menghapus resep favorit");
     //     }
-
-    //     // Hapus entri
-    //     $this->model->table('resep_favorit')
-    //         ->where(['id_pengguna' => $id_pengguna, 'id_resep' => $id_resep])
-    //         ->delete();
-
-    //     return $this->respond(['message' => 'Berhasil dihapus dari favorit']);
     // }
+
+
+    public function removeFromFavorites()
+    {
+        $id_pengguna = $this->request->getPost('id_pengguna');
+        $id_resep = $this->request->getPost('id_resep');
+
+        if (!$id_pengguna || !$id_resep) {
+            return $this->failValidationErrors('ID Pengguna dan ID Resep diperlukan.');
+        }
+
+        // Cari entri berdasarkan kombinasi id_pengguna dan id_resep
+        $favorit = $this->model->table('resep_favorit')
+            ->where(['id_pengguna' => $id_pengguna, 'id_resep' => $id_resep])
+            ->get()->getRow();
+
+        if (!$favorit) {
+            return $this->respond(['message' => 'Resep tidak ada di favorit']);
+        }
+
+        // Hapus entri
+        $this->model->table('resep_favorit')
+            ->where(['id_pengguna' => $id_pengguna, 'id_resep' => $id_resep])
+            ->delete();
+
+        return $this->respond(['message' => 'Berhasil dihapus dari favorit']);
+    }
 
     public function getFavoritesByUser($id_pengguna = null)
     {
@@ -148,37 +167,53 @@ class ResepFavorit extends ResourceController
         return $this->respond($result);
     }
 
-    /**
-     * Hapus resep dari daftar favorit.
-     */
-    public function removeFromFavorites()
+    // Memeriksa apakah resep ada di favorit
+    public function check()
     {
-        // Ambil JSON input
-        $input = $this->request->getJSON(true);
+        $data = $this->request->getJSON(true);
 
-        // Validasi input
-        if (!isset($input['id_pengguna']) || !isset($input['id_resep'])) {
-            return $this->fail('Validation Error: id_pengguna dan id_resep harus diisi.');
-        }
-
-        $idPengguna = $input['id_pengguna'];
-        $idResep = $input['id_resep'];
-
-        $db = \Config\Database::connect();
-
-        // Hapus data
-        $deleted = $db->table('favorites')
-            ->where('id_pengguna', $idPengguna)
-            ->where('id_resep', $idResep)
-            ->delete();
-
-        if ($deleted) {
+        if (empty($data['id_pengguna']) || empty($data['id_resep'])) {
             return $this->respond([
-                'status' => 200,
-                'message' => 'Berhasil menghapus resep dari favorit.',
-            ]);
-        } else {
-            return $this->failNotFound('Tidak ditemukan data yang cocok.');
+                'status' => 400,
+                'error' => 400,
+                'messages' => [
+                    'error' => 'ID Pengguna dan ID Resep diperlukan.'
+                ]
+            ], 400);
         }
+
+        $isFavorit = $this->model->where('id_pengguna', $data['id_pengguna'])
+            ->where('id_resep', $data['id_resep'])
+            ->first();
+
+        return $this->respond([
+            'status' => 200,
+            'isFavorit' => $isFavorit ? true : false
+        ], 200);
     }
+
+    // public function check()
+    // {
+    //     $id_pengguna = $this->request->getPost('id_pengguna');
+    //     $id_resep = $this->request->getPost('id_resep');
+
+    //     if (empty($id_pengguna) || empty($id_resep)) {
+    //         return $this->respond([
+    //             'status' => 400,
+    //             'error' => 400,
+    //             'messages' => [
+    //                 'error' => 'ID Pengguna dan ID Resep diperlukan.'
+    //             ]
+    //         ], 400);
+    //     }
+
+    //     $isFavorit = $this->model->where('id_pengguna', $id_pengguna)
+    //         ->where('id_resep', $id_resep)
+    //         ->first();
+
+    //     return $this->respond([
+    //         'status' => 200,
+    //         'isFavorit' => $isFavorit ? true : false
+    //     ], 200);
+    // }
 }
