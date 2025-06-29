@@ -247,4 +247,5 @@ class Pengguna extends ResourceController
 
     //     return $this->respond(['message' => "$updated password berhasil di-hash"]);
     // }
+
 }
