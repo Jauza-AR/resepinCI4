@@ -63,40 +63,82 @@ class Resep extends ResourceController
     }
 
 
-public function semuaByUser($id_pengguna)
-{
-    $resepModel = new ResepModel();
-    $likeModel = new ResepLikeModel();
-    $favoritModel = new ResepFavoritModel();
+    public function semuaByUser($id_pengguna)
+    {
+        $resepModel = new ResepModel();
+        $likeModel = new ResepLikeModel();
+        $favoritModel = new ResepFavoritModel();
 
-    $reseps = $resepModel->findAll();
-    $result = [];
+        $reseps = $resepModel->findAll();
+        $result = [];
 
-    foreach ($reseps as $resep) {
-        // Gunakan object property, bukan array
-        $jumlah_like = $likeModel->where(['id_resep' => $resep->id_resep, 'status' => 1])->countAllResults();
+        foreach ($reseps as $resep) {
+            // Gunakan object property, bukan array
+            $jumlah_like = $likeModel->where(['id_resep' => $resep->id_resep, 'status' => 1])->countAllResults();
 
-        $sudah_like = $likeModel
-            ->where(['id_pengguna' => $id_pengguna, 'id_resep' => $resep->id_resep, 'status' => 1])
-            ->first() ? true : false;
+            $sudah_like = $likeModel
+                ->where(['id_pengguna' => $id_pengguna, 'id_resep' => $resep->id_resep, 'status' => 1])
+                ->first() ? true : false;
 
-        $sudah_favorit = $favoritModel
-            ->where(['id_pengguna' => $id_pengguna, 'id_resep' => $resep->id_resep])
-            ->first() ? true : false;
+            $sudah_favorit = $favoritModel
+                ->where(['id_pengguna' => $id_pengguna, 'id_resep' => $resep->id_resep])
+                ->first() ? true : false;
 
-        $result[] = [
-            'id_resep'      => $resep->id_resep,
-            'nama_resep'    => $resep->nama_resep,
-            'gambar'        => $resep->gambar,
-            'deskripsi'     => $resep->deskripsi,
-            'jumlah_like'   => $jumlah_like,
-            'sudah_like'    => $sudah_like,
-            'sudah_favorit' => $sudah_favorit,
-        ];
+            $result[] = [
+                'id_resep'      => $resep->id_resep,
+                'nama_resep'    => $resep->nama_resep,
+                'gambar'        => $resep->gambar,
+                'deskripsi'     => $resep->deskripsi,
+                'jumlah_like'   => $jumlah_like,
+                'sudah_like'    => $sudah_like,
+                'sudah_favorit' => $sudah_favorit,
+            ];
+        }
+
+        return $this->respond($result);
     }
 
-    return $this->respond($result);
-}
+
+    public function byKategori($kategori)
+    {
+        $resepModel = new ResepModel();
+        $likeModel = new ResepLikeModel();
+        $favoritModel = new ResepFavoritModel();
+
+        // Ambil semua resep sesuai kategori
+        $reseps = $resepModel->where('kategori', $kategori)->findAll();
+        $user_id = session()->get('id_pengguna');
+        $result = [];
+
+        foreach ($reseps as $resep) {
+            $jumlah_like = $likeModel->where(['id_resep' => $resep->id_resep, 'status' => 1])->countAllResults();
+
+            $sudah_like = false;
+            $sudah_favorit = false;
+
+            if ($user_id) {
+                $sudah_like = $likeModel
+                    ->where(['id_pengguna' => $user_id, 'id_resep' => $resep->id_resep, 'status' => 1])
+                    ->first() ? true : false;
+
+                $sudah_favorit = $favoritModel
+                    ->where(['id_pengguna' => $user_id, 'id_resep' => $resep->id_resep])
+                    ->first() ? true : false;
+            }
+
+            $result[] = [
+                'id_resep'      => $resep->id_resep,
+                'nama_resep'    => $resep->nama_resep,
+                'gambar'        => $resep->gambar,
+                'deskripsi'     => $resep->deskripsi,
+                'jumlah_like'   => $jumlah_like,
+                'sudah_like'    => $sudah_like,
+                'sudah_favorit' => $sudah_favorit,
+            ];
+        }
+
+        return $this->respond($result);
+    }
 
     public function create()
     {
@@ -116,7 +158,7 @@ public function semuaByUser($id_pengguna)
         $resepModel = new ResepModel();
         $bahanModel = new BahanResepModel();
         $langkahModel = new LangkahResepModel();
-        
+
         $request = service('request');
 
         $data = [
@@ -130,19 +172,19 @@ public function semuaByUser($id_pengguna)
 
         // Upload Gambar
         $gambar = $request->getFile('gambar');
-        if($gambar && $gambar -> isValid() && !$gambar -> hasMoved()){
-            $namaGambar = $gambar -> getRandomName();
-            $gambar -> move(ROOTPATH . 'public/uploads', $namaGambar);
-            $data['gambar'] = base_url('uploads/'.$namaGambar);
+        if ($gambar && $gambar->isValid() && !$gambar->hasMoved()) {
+            $namaGambar = $gambar->getRandomName();
+            $gambar->move(ROOTPATH . 'public/uploads', $namaGambar);
+            $data['gambar'] = base_url('uploads/' . $namaGambar);
         } else {
             return $this->fail([
                 'message' => 'Gagal Upload',
-                'error' =>$gambar ? $gambar->getErrorString() : 'Gambar Tidak Di temukan'
+                'error' => $gambar ? $gambar->getErrorString() : 'Gambar Tidak Di temukan'
             ], ResponseInterface::HTTP_BAD_REQUEST);
         }
 
         // Validasi Gambar
-        if(!$this->validateData($data ,$resepModel->validationRules, $resepModel->validationMessages)){
+        if (!$this->validateData($data, $resepModel->validationRules, $resepModel->validationMessages)) {
             return $this->fail([
                 'message' => 'Validasi gagal',
                 'errors' => $this->validator->getErrors(),
@@ -152,7 +194,7 @@ public function semuaByUser($id_pengguna)
 
         // Simpan Ke resep 
         $idResep = $resepModel->insert($data);
-        if(!$idResep){
+        if (!$idResep) {
             return $this->fail([
                 'message' => 'Gagal Menyimpan Data',
                 'errors' => $resepModel->errors(),
@@ -162,9 +204,9 @@ public function semuaByUser($id_pengguna)
 
         // Ambil dan simpan  Bahan
         $bahanList = json_decode($request->getPost('bahan'), true);
-        if(is_array($bahanList) && !empty($bahanList)){
-            foreach($bahanList as $bahan){
-                if(is_string($bahan) && trim($bahan) !== ''){
+        if (is_array($bahanList) && !empty($bahanList)) {
+            foreach ($bahanList as $bahan) {
+                if (is_string($bahan) && trim($bahan) !== '') {
                     $bahanModel->insert([
                         'id_resep' => $idResep,
                         'nama_bahan' => $bahan
@@ -173,28 +215,28 @@ public function semuaByUser($id_pengguna)
             }
         }
         $langkahRaw = $request->getPost('langkah');
-        log_message('debug', 'Langkah : String Mentah (Raw) '. ($langkahRaw ?? 'null'));
-       
-        $langkahList = json_decode($langkahRaw, true);
-        log_message('debug', 'langkah hasil Decode'. json_encode($langkahList));
+        log_message('debug', 'Langkah : String Mentah (Raw) ' . ($langkahRaw ?? 'null'));
 
-        if(is_array($langkahList) && !empty($langkahList)){
-            foreach($langkahList as $i => $langkah){
-                if(is_string($langkah) && trim($langkah) !== ''){
-                    $insertDataLangkah= [
-                    'id_resep' => $idResep,
-                    'urutan' => $i + 1,
-                    'isi_langkah' => $langkah
+        $langkahList = json_decode($langkahRaw, true);
+        log_message('debug', 'langkah hasil Decode' . json_encode($langkahList));
+
+        if (is_array($langkahList) && !empty($langkahList)) {
+            foreach ($langkahList as $i => $langkah) {
+                if (is_string($langkah) && trim($langkah) !== '') {
+                    $insertDataLangkah = [
+                        'id_resep' => $idResep,
+                        'urutan' => $i + 1,
+                        'isi_langkah' => $langkah
                     ];
-                    log_message('debug', 'langkah : insert dengan data'.json_encode($insertDataLangkah));
+                    log_message('debug', 'langkah : insert dengan data' . json_encode($insertDataLangkah));
                     $insertlangkahResult = $langkahModel->insert($insertDataLangkah);
-                    if(!$insertlangkahResult){
-                        log_message('error', 'Langkah  : Gagal Insert'. $langkah. 'Error Karena'.json_encode($langkahModel->errors()));
+                    if (!$insertlangkahResult) {
+                        log_message('error', 'Langkah  : Gagal Insert' . $langkah . 'Error Karena' . json_encode($langkahModel->errors()));
                     } else {
-                        log_message('debug', 'langkah Berhasil di tambahkan'.$langkah. '(id Baru :' .$insertlangkahResult.')');
-                    }                    
+                        log_message('debug', 'langkah Berhasil di tambahkan' . $langkah . '(id Baru :' . $insertlangkahResult . ')');
+                    }
                 } else {
-                    log_message('warning', 'Langkah Item Tidak Valid '.json_encode($langkah));
+                    log_message('warning', 'Langkah Item Tidak Valid ' . json_encode($langkah));
                 }
                 // if(is_string($langkah) && trim($langkah) !== ''){
                 //     $langkahModel->insert([
@@ -205,7 +247,7 @@ public function semuaByUser($id_pengguna)
                 // }
             }
         } else {
-            log_message('warning', 'Langkah: Daftar tidak berbentuk array atau kosong setelah decode. LangkahRaw: '.($langkahRaw ?? 'null'));
+            log_message('warning', 'Langkah: Daftar tidak berbentuk array atau kosong setelah decode. LangkahRaw: ' . ($langkahRaw ?? 'null'));
         }
         // log_message('debug', 'END CREATE: Resep dan Detail Selesai Diproses');
 
@@ -233,7 +275,6 @@ public function semuaByUser($id_pengguna)
         //     }
         // }
         return $this->respondCreated(['message' => 'Resep dan Detail Berhasi Disimpan', 'id_resep' => $idResep]);
-
     }
 
     public function update($id = null)
@@ -281,9 +322,8 @@ public function semuaByUser($id_pengguna)
         // Ambil data resep
         $resep = $resepModel->find($id_resep);
 
-        if(!$resep){
-            return $this->failNotFound('Resep Dengan ID'.$id_resep."Tidak Di Temukan");
-            
+        if (!$resep) {
+            return $this->failNotFound('Resep Dengan ID' . $id_resep . "Tidak Di Temukan");
         }
         // Ambil data user pembuat resep
         $pembuat = $penggunaModel->find($resep->id_pengguna);
@@ -322,7 +362,8 @@ public function semuaByUser($id_pengguna)
         }
 
         $data = [
-            'resep' => $resep, 'pembuat' => $pembuat,
+            'resep' => $resep,
+            'pembuat' => $pembuat,
             'nama_pengguna' => $pembuat->nama_pengguna,
             'bahan' => $bahan,
             'langkah' => $langkah,
@@ -332,6 +373,27 @@ public function semuaByUser($id_pengguna)
             'sudah_favorit' => $sudah_favorit,
             'sudah_follow' => $sudah_follow,
         ];
+
+        return $this->respond($data);
+    }
+
+
+    public function getByUser($id_pengguna = null)
+    {
+        if (!$id_pengguna) {
+            return $this->failValidationErrors('ID Pengguna harus diisi.');
+        }
+
+        $builder = $this->model
+            ->select('resep.*, pengguna.nama_pengguna, pengguna.foto_profil')
+            ->join('pengguna', 'pengguna.id_pengguna = resep.id_pengguna')
+            ->where('resep.id_pengguna', $id_pengguna);
+
+        $data = $builder->findAll();
+
+        if (empty($data)) {
+            return $this->failNotFound('Tidak ada resep yang ditemukan untuk pengguna dengan ID: ' . $id_pengguna);
+        }
 
         return $this->respond($data);
     }
