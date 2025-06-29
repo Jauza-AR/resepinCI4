@@ -8,7 +8,7 @@ use CodeIgniter\Router\RouteCollection;
 $routes->get('/', 'Home::index');
 $routes->get('pengguna/hash-all-password', 'Pengguna::hashAllPassword');
 $routes->get('me', 'Pengguna::me');
-$routes->get('pengguna/hash-all-password', 'Pengguna::hashAllPassword');
+
 
 
 $routes->put('pengguna/update/(:num)', 'Pengguna::update/$1');
