@@ -124,6 +124,23 @@ class Pengguna extends ResourceController
         }
     }
 
+    public function hashAllPassword()
+    {
+        $users = $this->model->findAll();
+        $updated = 0;
+
+        foreach ($users as $user) {
+            // Cek jika password belum di-hash (panjang hash bcrypt 60 karakter)
+            if (strlen($user->password) < 60) {
+                $user->password = password_hash($user->password, PASSWORD_DEFAULT);
+                $this->model->save($user);
+                $updated++;
+            }
+        }
+
+        return $this->respond(['message' => "$updated password berhasil di-hash"]);
+    }
+
     // public function login()
     // {
     //     $data = $this->request->getPost();
@@ -183,6 +200,7 @@ class Pengguna extends ResourceController
     // }
 
     public function login()
+
     {
         $rules = [
             'email'    => 'required|valid_email',
@@ -211,6 +229,7 @@ class Pengguna extends ResourceController
             'logged_in'     => true
         ]);
 
+
         // Ubah entity ke array jika perlu
         $userData = [
             'id_pengguna'   => $user->id_pengguna,
@@ -225,5 +244,23 @@ class Pengguna extends ResourceController
             'message' => 'Login berhasil',
             'user'    => $userData
         ]);
+
+    }
+
+    public function hashAllPassword()
+    {
+        $users = $this->model->findAll();
+        $updated = 0;
+
+        foreach ($users as $user) {
+            // Cek jika password belum di-hash (panjang hash bcrypt 60 karakter)
+            if (strlen($user->password) < 60) {
+                $user->password = password_hash($user->password, PASSWORD_DEFAULT);
+                $this->model->save($user);
+                $updated++;
+            }
+        }
+
+        return $this->respond(['message' => "$updated password berhasil di-hash"]);
     }
 }

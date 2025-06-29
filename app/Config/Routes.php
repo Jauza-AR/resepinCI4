@@ -6,12 +6,14 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 $routes->get('/', 'Home::index');
-
+$routes->get('pengguna/hash-all-password', 'Pengguna::hashAllPassword');
 $routes->get('me', 'Pengguna::me');
+$routes->get('pengguna/hash-all-password', 'Pengguna::hashAllPassword');
 
 
 $routes->put('pengguna/update/(:num)', 'Pengguna::update/$1');
 
+$routes->get('resep/by-user/(:num)', 'Resep::getByUser/$1');
 $routes->get('resep/detail/(:num)', 'Resep::detail/$1');
 $routes->get('resep/populer', 'Resep::populer');
 $routes->get('resep/kategori/(:segment)', 'Resep::byKategori/$1');

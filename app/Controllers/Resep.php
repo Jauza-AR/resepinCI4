@@ -376,4 +376,27 @@ class Resep extends ResourceController
 
         return $this->respond($data);
     }
+
+
+    public function getByUser($id_pengguna = null)
+    {
+        if (!$id_pengguna) {
+            return $this->failValidationErrors('ID Pengguna harus diisi.');
+        }
+
+        $builder = $this->model
+            ->select('resep.*, pengguna.nama_pengguna, pengguna.foto_profil')
+            ->join('pengguna', 'pengguna.id_pengguna = resep.id_pengguna')
+            ->where('resep.id_pengguna', $id_pengguna);
+
+        $data = $builder->findAll();
+
+        if (empty($data)) {
+            return $this->failNotFound('Tidak ada resep yang ditemukan untuk pengguna dengan ID: ' . $id_pengguna);
+        }
+
+        return $this->respond($data);
+    }
+
+
 }
