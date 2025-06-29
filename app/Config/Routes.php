@@ -16,7 +16,7 @@ $routes->put('pengguna/update/(:num)', 'Pengguna::update/$1');
 $routes->get('resep/by-user/(:num)', 'Resep::getByUser/$1');
 $routes->get('resep/detail/(:num)', 'Resep::detail/$1');
 $routes->get('resep/populer', 'Resep::populer');
-
+$routes->get('resep/kategori/(:segment)', 'Resep::byKategori/$1');
 $routes->get('resep/semua-by-user/(:num)', 'Resep::semuaByUser/$1');
 $routes->get('favorite/user/(:num)', 'ResepFavorit::getFavoritesByUser/$1');
 $routes->get('komentar/resep/(:num)', 'Komentar::byResep/$1');
