@@ -34,7 +34,7 @@ class PenggunaModel extends Model
         'nama_pengguna'   => 'required|min_length[3]|max_length[20]',
         'email' => 'required|valid_email|is_unique[pengguna.email]',
         'password'        => 'required|min_length[8]',
-        'bio'             => 'permit_empty|max_length[255]',
+        'bio'             => 'permit_empty|max_length[125]',
         'foto_profil'     => 'permit_empty|valid_url',
         
     ];
@@ -54,7 +54,7 @@ class PenggunaModel extends Model
             'min_length'  => 'Password minimal 8 karakter.',
         ],
         'bio' => [
-            'max_length'  => 'Bio maksimal 255 karakter.',
+            'max_length'  => 'Bio maksimal 125 karakter.',
         ],
         'foto_profil' => [
             'valid_url'   => 'Foto profil harus berupa URL yang valid.',
