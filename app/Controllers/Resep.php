@@ -86,7 +86,7 @@ class Resep extends ResourceController
 
             $result[] = [
                 'id_resep'      => $resep->id_resep,
-                'nama_resep'    => $resep->nama_resep,
+                'nama_resep'    => $resep->nama_resep,                
                 'gambar'        => $resep->gambar,
                 'deskripsi'     => $resep->deskripsi,
                 'jumlah_like'   => $jumlah_like,
