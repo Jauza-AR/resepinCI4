@@ -231,6 +231,7 @@ class Pengguna extends ResourceController
 
     }
 
+
     // public function hashAllPassword()
     // {
     //     $users = $this->model->findAll();

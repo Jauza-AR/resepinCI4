@@ -51,3 +51,7 @@ $routes->delete('favorite/remove', 'ResepFavorit::removeFromFavorites');
 // $routes->delete('favorite/user/(:num)/resep/(:num)', 'ResepFavorit::removeFromFavorites/$1/$2');
 
 
+// Surya
+$routes->get('penggunafavorit/cek-follow/(:num)/(:num)', 'PenggunaFavorit::cekFollow/$1/$2');
+$routes->post('/favorit', 'PenggunaFavorit::followByResep');
+$routes->post('/unfavorit', 'PenggunaFavorit::unfollowByResep');
