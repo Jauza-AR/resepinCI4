@@ -119,6 +119,47 @@ class Resep extends ResourceController
         return $this->respond($result);
     }
 
+
+    public function byKategori($kategori)
+    {
+        $resepModel = new ResepModel();
+        $likeModel = new ResepLikeModel();
+        $favoritModel = new ResepFavoritModel();
+
+        // Ambil semua resep sesuai kategori
+        $reseps = $resepModel->where('kategori', $kategori)->findAll();
+        $user_id = session()->get('id_pengguna');
+        $result = [];
+
+        foreach ($reseps as $resep) {
+            $jumlah_like = $likeModel->where(['id_resep' => $resep->id_resep, 'status' => 1])->countAllResults();
+
+            $sudah_like = false;
+            $sudah_favorit = false;
+
+            if ($user_id) {
+                $sudah_like = $likeModel
+                    ->where(['id_pengguna' => $user_id, 'id_resep' => $resep->id_resep, 'status' => 1])
+                    ->first() ? true : false;
+
+                $sudah_favorit = $favoritModel
+                    ->where(['id_pengguna' => $user_id, 'id_resep' => $resep->id_resep])
+                    ->first() ? true : false;
+            }
+
+            $result[] = [
+                'id_resep'      => $resep->id_resep,
+                'nama_resep'    => $resep->nama_resep,
+                'gambar'        => $resep->gambar,
+                'deskripsi'     => $resep->deskripsi,
+                'jumlah_like'   => $jumlah_like,
+                'sudah_like'    => $sudah_like,
+                'sudah_favorit' => $sudah_favorit,
+            ];
+        }
+        return $this->respond($result);
+    }
+
     public function create()
     {
         // //  ====== Lama ======
@@ -362,7 +403,6 @@ class Resep extends ResourceController
         $langkahModel = new LangkahResepModel();
         $penggunaModel = new PenggunaModel();
 
-
         $resep = $resepModel->find($id);
         if(!$resep) {
             return $this->failNotFound('Resep dengan ID ' . $id . ' tidak ditemukan');
@@ -373,13 +413,28 @@ class Resep extends ResourceController
         // Memasutukan Gamabar menyimpan
         if (!empty($resep->gambar)) {
              $responseData['gambar_resep'] = base_url('uploads/' . $resep->gambar);
-        } else { $responseData['gambar_resep'] = null;
+        } else { 
+          $responseData['gambar_resep'] = null;
         }
         
 
+
         // Tambah Nama Penulis
-        $penulis = $penggunaModel->find($resep->id_pengguna);
+         $penulis = $penggunaModel->find($resep->id_pengguna);
          $responseData['penulis_resep'] = $penulis ? $penulis->nama_pengguna : 'Anonim';
+
+        $data = [
+            'resep' => $resep,
+            'pembuat' => $pembuat,
+            'nama_pengguna' => $pembuat->nama_pengguna,
+            'bahan' => $bahan,
+            'langkah' => $langkah,
+            'jumlah_like' => $jumlah_like,
+            'komentar' => $komentar,
+            'sudah_like' => $sudah_like,
+            'sudah_favorit' => $sudah_favorit,
+            'sudah_follow' => $sudah_follow,
+        ];
 
         //  Tambah BAhan
         $bahan = $bahanModel->where('id_resep', $id)->findAll();
@@ -410,4 +465,26 @@ class Resep extends ResourceController
         //     'data' => $resep
         // ]);
     }
+
+    public function getByUser($id_pengguna = null)
+    {
+        if (!$id_pengguna) {
+            return $this->failValidationErrors('ID Pengguna harus diisi.');
+        }
+
+        $builder = $this->model
+            ->select('resep.*, pengguna.nama_pengguna, pengguna.foto_profil')
+            ->join('pengguna', 'pengguna.id_pengguna = resep.id_pengguna')
+            ->where('resep.id_pengguna', $id_pengguna);
+
+        $data = $builder->findAll();
+
+        if (empty($data)) {
+            return $this->failNotFound('Tidak ada resep yang ditemukan untuk pengguna dengan ID: ' . $id_pengguna);
+        }
+
+        return $this->respond($data);
+    }
+
+
 }

@@ -24,6 +24,12 @@ class PenggunaFavorit extends ResourceController
             ->join('pengguna', 'pengguna.id_pengguna = pengguna_favorit.tambah_pengguna_favorit')
             ->where('pengguna_favorit.id_pengguna', $id_pengguna)
             ->findAll();
+
+        // Hapus field id_pengguna_favorit dari setiap item
+        foreach ($favorit as &$item) {
+            unset($item['id_pengguna_favorit']);
+        }
+
         return $this->respond($favorit);
     }
 
@@ -71,5 +77,101 @@ class PenggunaFavorit extends ResourceController
             ]);
         }
         return $this->failNotFound('Data tidak ditemukan');
+    }
+
+    public function followByResep()
+    {
+        $resepId = $this->request->getPost('idresep');
+        $currentUserId = $this->request->getPost('id_pengguna'); // input eksplisit
+
+        $resepModel = new \App\Models\ResepModel();
+        $followModel = new \App\Models\PenggunaFavoritModel();
+
+        $resep = $resepModel->find($resepId);
+        if (!$resep) {
+            return $this->response->setStatusCode(404)->setJSON(['message' => 'Resep tidak ditemukan']);
+        }
+
+        $targetUserId = $resep['id_pengguna'];
+
+        if (!$currentUserId) {
+            return $this->response->setStatusCode(401)->setJSON(['message' => 'ID pengguna tidak valid']);
+        }
+
+        if ($currentUserId == $targetUserId) {
+            return $this->response->setStatusCode(400)->setJSON(['message' => 'Tidak bisa mengikuti diri sendiri']);
+        }
+
+        $alreadyFollow = $followModel
+            ->where('id_pengguna', $currentUserId)
+            ->where('tambah_pengguna_favorit', $targetUserId)
+            ->first();
+
+        if ($alreadyFollow) {
+            return $this->response->setStatusCode(400)->setJSON(['message' => 'Sudah mengikuti pengguna ini']);
+        }
+
+        $followModel->insert([
+            'id_pengguna' => $currentUserId,
+            'tambah_pengguna_favorit' => $targetUserId,
+        ]);
+
+        return $this->response->setJSON(['message' => 'Berhasil mengikuti pengguna']);
+    }
+
+    public function unfollowByResep()
+    {
+        $resepId = $this->request->getPost('idresep');
+        $currentUserId = $this->request->getPost('id_pengguna'); // input eksplisit
+
+        $resepModel = new \App\Models\ResepModel();
+        $followModel = new \App\Models\PenggunaFavoritModel();
+
+        $resep = $resepModel->find($resepId);
+        if (!$resep) {
+            return $this->response->setStatusCode(404)->setJSON(['message' => 'Resep tidak ditemukan']);
+        }
+
+        $targetUserId = $resep['id_pengguna'];
+
+        if (!$currentUserId) {
+            return $this->response->setStatusCode(401)->setJSON(['message' => 'ID pengguna tidak valid']);
+        }
+
+        if ($currentUserId == $targetUserId) {
+            return $this->response->setStatusCode(400)->setJSON(['message' => 'Tidak bisa unfollow diri sendiri']);
+        }
+
+        $followRecord = $followModel
+            ->where('id_pengguna', $currentUserId)
+            ->where('tambah_pengguna_favorit', $targetUserId)
+            ->first();
+
+        if (!$followRecord) {
+            return $this->response->setStatusCode(400)->setJSON(['message' => 'Belum mengikuti pengguna ini']);
+        }
+
+        $followModel
+            ->where('id_pengguna', $currentUserId)
+            ->where('tambah_pengguna_favorit', $targetUserId)
+            ->delete();
+
+        return $this->response->setJSON(['message' => 'Berhasil berhenti mengikuti pengguna']);
+    }
+
+    public function cekFollow($id_pengguna = null, $tambah_pengguna_favorit = null)
+    {
+        if (!$id_pengguna || !$tambah_pengguna_favorit) {
+            return $this->fail('Parameter tidak lengkap');
+        }
+
+        $follow = $this->model
+            ->where('id_pengguna', $id_pengguna)
+            ->where('tambah_pengguna_favorit', $tambah_pengguna_favorit)
+            ->first();
+
+        return $this->respond([
+            'sudah_follow' => $follow ? true : false
+        ]);
     }
 }
