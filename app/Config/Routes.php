@@ -12,7 +12,7 @@ $routes->get('me', 'Pengguna::me');
 
 
 $routes->put('pengguna/update/(:num)', 'Pengguna::update/$1');
-
+$routes->get('resep/detail/(:num)', 'Resep::detail/$1');
 $routes->get('resep/by-user/(:num)', 'Resep::getByUser/$1');
 $routes->get('resep/detail/(:num)', 'Resep::detail/$1');
 $routes->get('resep/populer', 'Resep::populer');
@@ -27,7 +27,7 @@ $routes->post('pengguna/login', 'Pengguna::login');
 $routes->resource('resep');
 
 //pengguna favorit
-$routes->group('penggunafavorit', function($routes) {
+$routes->group('penggunafavorit', function ($routes) {
     $routes->get('(:num)', 'PenggunaFavorit::index/$1');
     $routes->post('/', 'PenggunaFavorit::create');
     $routes->delete('(:num)/(:num)', 'PenggunaFavorit::delete/$1/$2');
@@ -55,3 +55,4 @@ $routes->delete('favorite/remove', 'ResepFavorit::removeFromFavorites');
 $routes->get('penggunafavorit/cek-follow/(:num)/(:num)', 'PenggunaFavorit::cekFollow/$1/$2');
 $routes->post('/favorit', 'PenggunaFavorit::followByResep');
 $routes->post('/unfavorit', 'PenggunaFavorit::unfollowByResep');
+
