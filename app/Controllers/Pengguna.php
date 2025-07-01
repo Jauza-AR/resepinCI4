@@ -8,6 +8,9 @@ use CodeIgniter\RESTful\ResourceController;
 
 class Pengguna extends ResourceController
 {
+
+
+
     protected $modelName = 'App\Models\PenggunaModel';
     protected $format    = 'json';
 
@@ -122,6 +125,40 @@ class Pengguna extends ResourceController
         if ($this->model->delete($id)) {
             return $this->respondDeleted("Pengguna dengan ID $id telah dihapus");
         }
+    }
+
+    // public function hashAllPassword()
+    // {
+    //     $users = $this->model->findAll();
+    //     $updated = 0;
+
+    //     foreach ($users as $user) {
+    //         // Cek jika password belum di-hash (panjang hash bcrypt 60 karakter)
+    //         if (strlen($user->password) < 60) {
+    //             $user->password = password_hash($user->password, PASSWORD_DEFAULT);
+    //             $this->model->save($user);
+    //             $updated++;
+    //         }
+    //     }
+
+    //     return $this->respond(['message' => "$updated password berhasil di-hash"]);
+    // }
+
+    public function hashAllPassword()
+    {
+        $users = $this->model->findAll();
+        $updated = 0;
+
+        foreach ($users as $user) {
+            // Cek jika password belum di-hash (bcrypt hash = panjang 60 karakter)
+            if (strlen($user->password) < 60) {
+                $user->password = password_hash($user->password, PASSWORD_DEFAULT);
+                $this->model->save($user);
+                $updated++;
+            }
+        }
+
+        return $this->respond(['message' => "$updated password berhasil di-hash"]);
     }
 
 

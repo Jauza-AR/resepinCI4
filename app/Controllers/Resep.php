@@ -50,15 +50,36 @@ class Resep extends ResourceController
 
     public function populer()
     {
+        // lama
+        // 
+        // $db = \Config\Database::connect();
+        // $builder = $db->table('resep')
+        //     ->select('resep.*, COUNT(resep_like.id_like) as jumlah_like')
+        //     ->join('resep_like', 'resep.id_resep = resep_like.id_resep AND resep_like.status = 1', 'left')
+        //     ->groupBy('resep.id_resep')
+        //     ->orderBy('jumlah_like', 'DESC')
+        //     ->limit(10);
+
+        // $data = $builder->get()->getResult();
+        // return $this->respond($data);
+
         $db = \Config\Database::connect();
         $builder = $db->table('resep')
-            ->select('resep.*, COUNT(resep_like.id_like) as jumlah_like')
+            ->select('resep.id_resep, resep.nama_resep, resep.gambar, resep.kategori, resep.deskripsi, resep.tanggal_unggah, COUNT(resep_like.id_like) as jumlah_like')
             ->join('resep_like', 'resep.id_resep = resep_like.id_resep AND resep_like.status = 1', 'left')
             ->groupBy('resep.id_resep')
             ->orderBy('jumlah_like', 'DESC')
             ->limit(10);
 
         $data = $builder->get()->getResult();
+
+        // if (!$data || count($data) === 0) 
+        if (!$data)
+        {
+            // return $this->failNotFound('Resep populer tidak ditemukan');
+            return $this->failServerError('Gagal mengambil data');
+        }
+
         return $this->respond($data);
     }
 
@@ -86,7 +107,7 @@ class Resep extends ResourceController
 
             $result[] = [
                 'id_resep'      => $resep->id_resep,
-                'nama_resep'    => $resep->nama_resep,                
+                'nama_resep'    => $resep->nama_resep,
                 'gambar'        => $resep->gambar,
                 'deskripsi'     => $resep->deskripsi,
                 'jumlah_like'   => $jumlah_like,
@@ -136,7 +157,6 @@ class Resep extends ResourceController
                 'sudah_favorit' => $sudah_favorit,
             ];
         }
-
         return $this->respond($result);
     }
 
@@ -308,58 +328,100 @@ class Resep extends ResourceController
     }
 
 
-    public function detail($id_resep)
-    {
+    // public function detail($id_resep)
+    // {
+    //     $resepModel = new ResepModel();
+    //     $penggunaModel = new PenggunaModel();
+    //     $bahanModel = new BahanResepModel();
+    //     $langkahModel = new LangkahResepModel();
+    //     $likeModel = new ResepLikeModel();
+    //     $komentarModel = new KomentarModel();
+    //     // $favoritModel = new ResepFavoritModel();
+    //     // $penggunaFavoritModel = new PenggunaFavoritModel();
+
+    //     // Ambil data resep
+    //     $resep = $resepModel->find($id_resep);
+
+    //     if (!$resep) {
+    //         return $this->failNotFound('Resep Dengan ID' . $id_resep . "Tidak Di Temukan");
+    //     }
+    //     // Ambil data user pembuat resep
+    //     $pembuat = $penggunaModel->find($resep->id_pengguna);
+
+    //     // Nama pengguna
+    //     // $nama_pengguna = $penggunaModel->select('nama_pengguna')
+    //     //     ->where('id_pengguna', $resep->id_pengguna)
+    //     //     ->first();
+
+    //     // Ambil bahan-bahan resep
+    //     $bahan = $bahanModel->where('id_resep', $id_resep)->findAll();
+
+    //     // Ambil langkah-langkah resep
+    //     $langkah = $langkahModel->where('id_resep', $id_resep)->orderBy('urutan', 'ASC')->findAll();
+
+    //     // Ambil jumlah like
+    //     $jumlah_like = $likeModel->where(['id_resep' => $id_resep, 'status' => 1])->countAllResults();
+
+    //     // Ambil komentar
+    //     // $komentar = $komentarModel->where('id_resep', $id_resep)->findAll();
+    //     $komentar = $komentarModel->select('komentar.*, pengguna.nama_pengguna, pengguna.foto_profil')
+    //         ->join('pengguna', 'pengguna.id_pengguna = komentar.id_pengguna')
+    //         ->where('komentar.id_resep', $id_resep)
+    //         ->findAll();
+
+    //     // Cek apakah user sudah like, favorit, atau follow (jika sudah login)
+    //     $user_id = session()->get('id_pengguna');
+    //     $sudah_like = false;
+    //     $sudah_favorit = false;
+    //     $sudah_follow = false;
+
+    //     if ($user_id) {
+    //         $sudah_like = $likeModel->where(['id_pengguna' => $user_id, 'id_resep' => $id_resep, 'status' => 1])->first() ? true : false;
+    //         // $sudah_favorit = $favoritModel->where(['id_pengguna' => $user_id, 'id_resep' => $id_resep])->first() ? true : false;
+    //         // $sudah_follow = $penggunaFavoritModel->where(['id_pengguna' => $user_id, 'tambah_pengguna_favorit' => $pembuat['id_pengguna']])->first() ? true : false;
+    //     }
+
+    //     $data = [
+    //         'resep' => $resep,
+    //         'pembuat' => $pembuat,
+    //         'nama_pengguna' => $pembuat->nama_pengguna,
+    //         'bahan' => $bahan,
+    //         'langkah' => $langkah,
+    //         'jumlah_like' => $jumlah_like,
+    //         'komentar' => $komentar,
+    //         'sudah_like' => $sudah_like,
+    //         'sudah_favorit' => $sudah_favorit,
+    //         'sudah_follow' => $sudah_follow,
+    //     ];
+
+    //     return $this->respond($data);
+    // }
+
+    public function detail($id){
         $resepModel = new ResepModel();
-        $penggunaModel = new PenggunaModel();
         $bahanModel = new BahanResepModel();
         $langkahModel = new LangkahResepModel();
-        $likeModel = new ResepLikeModel();
-        $komentarModel = new KomentarModel();
-        // $favoritModel = new ResepFavoritModel();
-        // $penggunaFavoritModel = new PenggunaFavoritModel();
+        $penggunaModel = new PenggunaModel();
 
-        // Ambil data resep
-        $resep = $resepModel->find($id_resep);
-
-        if (!$resep) {
-            return $this->failNotFound('Resep Dengan ID' . $id_resep . "Tidak Di Temukan");
+        $resep = $resepModel->find($id);
+        if(!$resep) {
+            return $this->failNotFound('Resep dengan ID ' . $id . ' tidak ditemukan');
         }
-        // Ambil data user pembuat resep
-        $pembuat = $penggunaModel->find($resep->id_pengguna);
 
-        // Nama pengguna
-        // $nama_pengguna = $penggunaModel->select('nama_pengguna')
-        //     ->where('id_pengguna', $resep->id_pengguna)
-        //     ->first();
+        $responseData = $resep->toArray();
 
-        // Ambil bahan-bahan resep
-        $bahan = $bahanModel->where('id_resep', $id_resep)->findAll();
-
-        // Ambil langkah-langkah resep
-        $langkah = $langkahModel->where('id_resep', $id_resep)->orderBy('urutan', 'ASC')->findAll();
-
-        // Ambil jumlah like
-        $jumlah_like = $likeModel->where(['id_resep' => $id_resep, 'status' => 1])->countAllResults();
-
-        // Ambil komentar
-        // $komentar = $komentarModel->where('id_resep', $id_resep)->findAll();
-        $komentar = $komentarModel->select('komentar.*, pengguna.nama_pengguna, pengguna.foto_profil')
-            ->join('pengguna', 'pengguna.id_pengguna = komentar.id_pengguna')
-            ->where('komentar.id_resep', $id_resep)
-            ->findAll();
-
-        // Cek apakah user sudah like, favorit, atau follow (jika sudah login)
-        $user_id = session()->get('id_pengguna');
-        $sudah_like = false;
-        $sudah_favorit = false;
-        $sudah_follow = false;
-
-        if ($user_id) {
-            $sudah_like = $likeModel->where(['id_pengguna' => $user_id, 'id_resep' => $id_resep, 'status' => 1])->first() ? true : false;
-            // $sudah_favorit = $favoritModel->where(['id_pengguna' => $user_id, 'id_resep' => $id_resep])->first() ? true : false;
-            // $sudah_follow = $penggunaFavoritModel->where(['id_pengguna' => $user_id, 'tambah_pengguna_favorit' => $pembuat['id_pengguna']])->first() ? true : false;
+        // Memasutukan Gamabar menyimpan
+        if (!empty($resep->gambar)) {
+             $responseData['gambar_resep'] = base_url('uploads/' . $resep->gambar);
+        } else { 
+          $responseData['gambar_resep'] = null;
         }
+        
+
+
+        // Tambah Nama Penulis
+         $penulis = $penggunaModel->find($resep->id_pengguna);
+         $responseData['penulis_resep'] = $penulis ? $penulis->nama_pengguna : 'Anonim';
 
         $data = [
             'resep' => $resep,
@@ -374,9 +436,35 @@ class Resep extends ResourceController
             'sudah_follow' => $sudah_follow,
         ];
 
-        return $this->respond($data);
-    }
+        //  Tambah BAhan
+        $bahan = $bahanModel->where('id_resep', $id)->findAll();
+        $responseData['bahan_resep'] = $bahan;
 
+        // Tambah Langkah
+         $langkah = $langkahModel->where('id_resep', $id)->orderBy('urutan', 'ASC')->findAll();
+         $responseData['langkah_resep'] = $langkah;
+
+        return $this->respond([
+            'status' => true,
+            'message' => 'Detail resep berhasil diambil',
+            'data' => $responseData
+        ]);
+
+
+        // Get Langkah Dan Bahan
+        // $bahan = $bahanModel->where('id_resep', $id)->findAll();
+        // $langkah = $langkahModel->where('id_resep', $id)->orderBy('urutan', 'ASC')->findAll();
+
+        // // Gabungkan Bahan Dan Langkah ke dalam Resep
+        // $resep['bahan'] = $bahan;
+        // $resep['langkah'] = $langkah;
+
+        // return $this->respond([
+        //     'status' => true,
+        //     'message' => 'Detail resep berhasil diambil',
+        //     'data' => $resep
+        // ]);
+    }
 
     public function getByUser($id_pengguna = null)
     {
