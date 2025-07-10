@@ -30,6 +30,11 @@ class Resep extends ResourceController
     public function index()
     {
         $data = $this->model->findAll();
+        // Tambah
+        foreach ($data as $item) {
+            // $item['gambar'] = base_url('uploads/' . $item['gambar']);
+            $item['gambar'] = base_url($item['gambar']);
+        }
         return $this->response->setJSON($data);
     }
 
@@ -199,7 +204,9 @@ class Resep extends ResourceController
         if ($gambar && $gambar->isValid() && !$gambar->hasMoved()) {
             $namaGambar = $gambar->getRandomName();
             $gambar->move(ROOTPATH . 'public/uploads', $namaGambar);
-            $data['gambar'] = base_url('uploads/' . $namaGambar);
+            // $data['gambar'] = base_url('uploads/' . $namaGambar);
+            // $data['gambar'] = 'https://be1f-114-10-23-72.ngrok-free.app/uploads/' . $namaGambar;
+            $data['gambar'] = 'uploads/' . $namaGambar;
         } else {
             return $this->fail([
                 'message' => 'Gagal Upload',
@@ -207,7 +214,7 @@ class Resep extends ResourceController
             ], ResponseInterface::HTTP_BAD_REQUEST);
         }
 
-        // Validasi Gambar
+        // ada salah
         if (!$this->validateData($data, $resepModel->validationRules, $resepModel->validationMessages)) {
             return $this->fail([
                 'message' => 'Validasi gagal',
@@ -559,6 +566,12 @@ class Resep extends ResourceController
             return $this->failNotFound('Tidak ada resep yang ditemukan untuk pengguna dengan ID: ' . $id_pengguna);
         }
 
-        return $this->respond($data);
+        return $this->respond([
+            'status' => true,
+            'message' => 'Detail resep berhasil diambil',
+            'data' => $data
+        ]);
+
+        // return $this->respond($data);
     }
 }
