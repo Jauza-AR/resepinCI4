@@ -13,7 +13,7 @@ use CodeIgniter\Router\RouteCollection;
 
 
     $routes->put('pengguna/update/(:num)', 'Pengguna::update/$1');
-    $routes->get('resep/detail/(:num)', 'Resep::detail/$1');
+    $routes->get('resep/detail/(:num)', 'Resep::show/$1');
     $routes->get('resep/by-user/(:num)', 'Resep::getByUser/$1');
     // $routes->get('resep/detail/(:num)', 'Resep::detail/$1');
     $routes->get('resep/populer', 'Resep::populer');

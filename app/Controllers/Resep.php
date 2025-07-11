@@ -41,7 +41,7 @@ class Resep extends ResourceController
     public function show($id = null)
     {
         $builder = $this->model
-            ->select('resep.*, pengguna.nama_pengguna, pengguna.foto_profil')
+            ->select('resep.*, pengguna.nama_pengguna,pengguna.nama_pengguna, pengguna.foto_profil')
             ->join('pengguna', 'pengguna.id_pengguna = resep.id_pengguna')
             ->where('resep.id_resep', $id);
 
@@ -94,9 +94,9 @@ class Resep extends ResourceController
         $likeModel = new ResepLikeModel();
         $favoritModel = new ResepFavoritModel();
         // LAma 
-        // $reseps = $resepModel->findAll();
+        $reseps = $resepModel->findAll();
         // Baru
-        $reseps = $resepModel->where('id_pengguna', $id_pengguna)->findAll();
+        // $reseps = $resepModel->where('id_pengguna', $id_pengguna)->findAll();
 
         $result = [];
 
