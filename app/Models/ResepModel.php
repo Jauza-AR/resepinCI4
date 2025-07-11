@@ -13,7 +13,7 @@ class ResepModel extends Model
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
-        'id_resep',
+        // 'id_resep',
         'id_pengguna',
         'nama_resep',
         'gambar',
@@ -37,6 +37,7 @@ class ResepModel extends Model
 
     // Validation
     protected $validationRules      = [
+        'id_pengguna'    => 'required|integer',
         'nama_resep' => 'required|min_length[5]|max_length[20]',
         'gambar' => 'required',
         'kategori' => 'required',
@@ -44,6 +45,10 @@ class ResepModel extends Model
         'tanggal_unggah' => 'required|valid_date',
     ];
     protected $validationMessages   = [
+        'id_pengguna' => [ 
+            'required' => 'ID Pengguna harus diisi.',
+            'integer'  => 'ID Pengguna harus berupa angka.'
+        ],
         'nama_resep' => [
             'required' => 'Silakan masukan nama resep',
             'min_length' => 'Nama resep minimal 5 karakter',
