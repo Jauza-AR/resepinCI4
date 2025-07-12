@@ -10,7 +10,8 @@ class PenggunaFavoritModel extends Model
     protected $table            = 'pengguna_favorit';
     protected $primaryKey       = 'id_pengguna_favorit';
     protected $useAutoIncrement = true;
-    protected $returnType       = 'array';
+    // protected $returnType       = 'array';
+    protected $returnType       = 'App\Entities\PenggunaFavorit';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
