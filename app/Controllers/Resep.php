@@ -129,6 +129,7 @@ class Resep extends ResourceController
             $result[] = [
                 'id_resep'      => $resep->id_resep,
                 'nama_resep'    => $resep->nama_resep,
+                'kategori'      => $resep->kategori,
                 'gambar'        => $resep->gambar,
                 'deskripsi'     => $resep->deskripsi,
                 'jumlah_like'   => $jumlah_like,
@@ -397,6 +398,24 @@ class Resep extends ResourceController
 
         return $this->respond($data);
     }
+
+    public function makanan()
+    {
+        $resepModel = new ResepModel();
+        $data = $resepModel->where('kategori', 'makanan')->findAll();
+        return $this->respond($data);
+    }
+
+    // GET /minuman
+    public function minuman()
+    {
+        $resepModel = new ResepModel();
+        $data = $resepModel->where('kategori', 'minuman')->findAll();
+        return $this->respond($data);
+    }
+
+
+
 
 
 }

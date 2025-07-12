@@ -34,9 +34,9 @@ $routes->group('penggunafavorit', function($routes) {
 });
 
 $routes->resource('pengguna');
-
 $routes->resource('resepfavorit');
-
+$routes->get('makanan', 'Resep::makanan');
+$routes->get('minuman', 'Resep::minuman');
 $routes->get('komentar/resep/(:num)', 'Komentar::byResep/$1');
 $routes->resource('komentar');
 

@@ -124,22 +124,6 @@ class Pengguna extends ResourceController
         }
     }
 
-    public function hashAllPassword()
-    {
-        $users = $this->model->findAll();
-        $updated = 0;
-
-        foreach ($users as $user) {
-            // Cek jika password belum di-hash (panjang hash bcrypt 60 karakter)
-            if (strlen($user->password) < 60) {
-                $user->password = password_hash($user->password, PASSWORD_DEFAULT);
-                $this->model->save($user);
-                $updated++;
-            }
-        }
-
-        return $this->respond(['message' => "$updated password berhasil di-hash"]);
-    }
 
     // public function login()
     // {
@@ -247,20 +231,20 @@ class Pengguna extends ResourceController
 
     }
 
-    public function hashAllPassword()
-    {
-        $users = $this->model->findAll();
-        $updated = 0;
+    // public function hashAllPassword()
+    // {
+    //     $users = $this->model->findAll();
+    //     $updated = 0;
 
-        foreach ($users as $user) {
-            // Cek jika password belum di-hash (panjang hash bcrypt 60 karakter)
-            if (strlen($user->password) < 60) {
-                $user->password = password_hash($user->password, PASSWORD_DEFAULT);
-                $this->model->save($user);
-                $updated++;
-            }
-        }
+    //     foreach ($users as $user) {
+    //         // Cek jika password belum di-hash (panjang hash bcrypt 60 karakter)
+    //         if (strlen($user->password) < 60) {
+    //             $user->password = password_hash($user->password, PASSWORD_DEFAULT);
+    //             $this->model->save($user);
+    //             $updated++;
+    //         }
+    //     }
 
-        return $this->respond(['message' => "$updated password berhasil di-hash"]);
-    }
+    //     return $this->respond(['message' => "$updated password berhasil di-hash"]);
+    // }
 }
